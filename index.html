@@ -126,6 +126,14 @@
             align-items: center;
             justify-content: flex-start;
         }
+
+        #result-capture-area.for-capture {
+            background: #ffffff !important;
+            padding: 60px 40px !important; /* 이미지에 충분한 상하좌우 여백 부여 */
+            border-radius: 40px !important; /* 이미지 모서리를 크게 라운딩 */
+            box-shadow: none !important;    /* 이미지 자체에는 그림자가 없는 게 깔끔합니다 */
+            width: 450px !important;        /* 이미지의 가로 폭을 고정하여 레이아웃 최적화 */
+        }
     </style>
 </head>
 <body>
@@ -135,7 +143,7 @@
             <h1>바울의 편지 찾기</h1>
             <p class="sub">수많은 교회에 편지를 썼던 바울,<br>지금 나에게 편지를 보낸다면<br>어떤 내용이 담겨 있을까요?</p>
             <button class="btn btn-primary" onclick="startTest()">내 유형 알아보기</button>
-            <div style="margin-top:20px; font-size:0.8rem; color:#aaa;">Designed by Gemini</div>
+            <div style="margin-top:20px; font-size:0.8rem; color:#aaa;">로고스 고등부</div>
         </section>
 
         <section id="screen-quiz" class="hidden">
@@ -293,13 +301,16 @@
             
             // 캡처 중임을 알리는 UI 변경 (선택 사항)
             const btn = document.querySelector('.btn-primary');
+
+            captureElement.classList.add('for-capture');
+
             const originalText = btn.innerText;
             btn.innerText = "이미지 생성 중...";
             btn.disabled = true;
 
             html2canvas(captureElement, {
                 scale: 2, // 고해상도로 캡처 (선명하게)
-                backgroundColor: "#ffffff", // 배경색 지정
+                backgroundColor: null, // 배경색 지정
                 logging: false, // 로그 끄기
                 useCORS: true // 외부 이미지 사용 시 필요
             }).then(canvas => {
@@ -313,9 +324,11 @@
                 link.click();
 
                 // UI 원상복구
+                captureElement.classList.remove('for-capture');
                 btn.innerText = originalText;
                 btn.disabled = false;
             }).catch(err => {
+                captureElement.classList.remove('for-capture');
                 alert("이미지 저장 중 오류가 발생했습니다.");
                 btn.innerText = originalText;
                 btn.disabled = false;
