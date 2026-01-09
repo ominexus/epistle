@@ -69,11 +69,11 @@
             const [currentBook, setCurrentBook] = useState(null);
             const [darkMode, setDarkMode] = useState(false);
 
-            // 데이터 구조화 (상세 내용 보강)
+            // 데이터 구조화 (상세 내용 보강 및 이모지 추가)
             const studyData = [
                 {
                 id: 'romans',
-                title: '로마서',
+                title: '📜 로마서',
                 subtitle: '복음의 능력과 삶의 변혁',
                 color: 'bg-red-600',
                 content: {
@@ -185,7 +185,7 @@
                 },
                 {
                 id: 'galatians',
-                title: '갈라디아서',
+                title: '🗽 갈라디아서',
                 subtitle: '참된 자유의 복음',
                 color: 'bg-orange-600',
                 content: {
@@ -218,6 +218,25 @@
                             sub: '사람을 두려워하지 않는 담대함',
                             text: [
                                 '베드로가 할례자들을 두려워하여 이방인과 식사하다 자리를 피한 사건을 바울은 책망합니다. 복음적 자존감이 없으면 사람들의 시선에 굴복하게 됩니다.'
+                            ]
+                        }
+                        ]
+                    },
+                    {
+                        title: '3장: 율법과 약속',
+                        details: [
+                        {
+                            sub: '율법의 기능: 몽학선생(Tutor)',
+                            text: [
+                                '율법은 우리를 구원하는 사다리가 아닙니다. 율법의 진짜 목적은 우리의 죄를 진단하고 깨닫게 하여, 유일한 해결책이신 그리스도께로 인도하는 가정교사(몽학선생) 역할을 하는 것입니다.',
+                                '율법은 병을 보여주는 X-ray이지, 병을 고치는 치료제가 아닙니다. 치료제는 오직 복음뿐입니다.'
+                            ]
+                        },
+                        {
+                            sub: '성취가 아닌 신분',
+                            text: [
+                                '너희가 다 믿음으로 말미암아 그리스도 예수 안에서 하나님의 아들이 되었으니... 유대인이나 헬라인이나 종이나 자유인이나 남자나 여자나 다 그리스도 예수 안에서 하나이니라.',
+                                '세상은 "성취"가 곧 너의 정체성이라고 말하지만, 복음은 "그리스도와의 연합"이 우리의 정체성이라 선언합니다. 이 안에서 인종, 계급, 성별의 장벽은 무너집니다.'
                             ]
                         }
                         ]
@@ -269,7 +288,7 @@
                 },
                 {
                 id: 'ephesians',
-                title: '에베소서',
+                title: '⛪ 에베소서',
                 subtitle: '우주적 구원과 실천적 교회',
                 color: 'bg-blue-600',
                 content: {
@@ -323,7 +342,7 @@
                 },
                 {
                 id: 'philippians',
-                title: '빌립보서',
+                title: '🎁 빌립보서',
                 subtitle: '정복할 수 없는 기쁨',
                 color: 'bg-pink-600',
                 content: {
@@ -400,7 +419,7 @@
                 },
                 {
                 id: 'corinthians',
-                title: '고린도전후서',
+                title: '🏺 고린도전후서',
                 subtitle: '은혜로 변화되는 삶과 약함의 신비',
                 color: 'bg-purple-600',
                 content: {
