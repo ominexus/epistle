@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>바울 서신 심층 가이드</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel (for JSX) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Tailwind Config for Dark Mode -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    scale: {
+                        '102': '1.02',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        body {
+            font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+        /* Hide scrollbar for clean UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- Icons Components (Lucide replacement for standalone HTML) ---
+        const Icon = ({ children, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {children}
+            </svg>
+        );
+
+        const ChevronRight = ({ className }) => <Icon className={className}><path d="m9 18 6-6-6-6"/></Icon>;
+        const ChevronLeft = ({ className }) => <Icon className={className}><path d="m15 18-6-6 6-6"/></Icon>;
+        const ChevronDown = ({ className }) => <Icon className={className}><path d="m6 9 6 6 6-6"/></Icon>;
+        const ChevronUp = ({ className }) => <Icon className={className}><path d="m18 15-6-6-6 6"/></Icon>;
+        const Sun = ({ className }) => <Icon className={className}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41-1.41"/><path d="m19.07 4.93-1.41 1.41"/></Icon>;
+        const Moon = ({ className }) => <Icon className={className}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></Icon>;
+
+        // --- Main Application ---
+        const BibleGuideApp = () => {
+            const [currentBook, setCurrentBook] = useState(null);
+            const [darkMode, setDarkMode] = useState(false);
+
+            // 데이터 구조화
+            const studyData = [
+                {
+                id: 'romans',
+                title: '로마서',
+                subtitle: '복음의 능력과 삶의 변혁',
+                color: 'bg-red-600',
+                content: {
+                    intro: '로마서는 기독교 신앙의 대성당과 같습니다. 인류의 죄와 소외를 진단하고, 유일한 해결책으로 예수 그리스도의 복음을 제시합니다.',
+                    sections: [
+                    {
+                        title: '제1부: 인류의 보편적 파산과 하나님의 의 (1-3장)',
+                        details: [
+                        {
+                            sub: '1.1 복음: 정보가 아닌 능력',
+                            text: '복음은 단순한 입문 지식이 아니라, 모든 믿는 자에게 구원을 주시는 하나님의 능력(Dynamis)입니다.'
+                        },
+                        {
+                            sub: '1.2 죄의 본질: 마음의 우상공장',
+                            text: '죄의 본질은 우상숭배입니다. 선한 것(가족, 성취 등)을 하나님보다 더 의지하여 궁극적인 것으로 만들 때 그것은 우상이 됩니다.'
+                        },
+                        {
+                            sub: '1.3 두 가지 잃어버린 아들들',
+                            text: '비종교(내 맘대로 삶)와 종교(도덕으로 하나님을 통제하려 함) 모두 하나님을 떠난 것입니다. 복음은 이 둘을 거부하는 제3의 길입니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '제2부: 칭의, 은혜로 주어진 새로운 신분 (3-5장)',
+                        details: [
+                        {
+                            sub: '2.1 하나님의 의',
+                            text: '십자가는 하나님의 공의와 사랑이 만나는 장소입니다. 우리는 일한 대가가 아니라 선물로 의롭다 하심을 얻습니다.'
+                        },
+                        {
+                            sub: '2.2 대표성의 원리',
+                            text: '아담 안에서 죄와 죽음을 물려받았으나, 이제 그리스도와 연합하여 그분의 의로움과 생명이 우리의 것이 되었습니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '제3부: 성화, 내면의 전쟁과 참된 자유 (6-7장)',
+                        details: [
+                        {
+                            sub: '3.1 신분과 상태',
+                            text: '우리는 죄에 대해 법적으로 죽었습니다. 노예 해방 선언이 내려졌지만, 여전히 예전 주인의 명령에 복종하는 습관과 싸워야 합니다.'
+                        },
+                        {
+                            sub: '3.2 내면의 전쟁',
+                            text: '죄와의 싸움은 영적 생명이 있다는 증거입니다. 우리는 승리할 수 없는 전투(불신자)에서 패배할 수 없는 전투(신자)로 옮겨졌습니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '제4부: 성령 안에서의 삶 (8장)',
+                        details: [
+                        {
+                            sub: '4.1 결코 정죄함이 없나니',
+                            text: '그리스도 안에 있는 자에게는 결코 정죄함이 없습니다. 이것이 우리의 안전기지입니다.'
+                        },
+                        {
+                            sub: '4.2 양자됨(Adoption)',
+                            text: '하나님은 우리를 재판정에서 풀어주실 뿐 아니라, 집으로 데려가 자녀로 삼으셨습니다. 노예의 영이 아닌 양자의 영을 받았습니다.'
+                        },
+                        {
+                            sub: '4.3 끊을 수 없는 사랑',
+                            text: '세상의 어떤 것도, 환난이나 위험도 우리를 하나님의 사랑에서 끊을 수 없습니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '제5부: 하나님의 주권과 신비 (9-11장)',
+                        details: [
+                        {
+                            sub: '5.1 선택과 긍휼',
+                            text: '구원은 인간의 자격이 아닌 오직 하나님의 긍휼에 달려 있습니다. 이는 교만을 꺾고 겸손한 감사를 낳습니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '제6부: 복음이 빚어내는 삶 (12-16장)',
+                        details: [
+                        {
+                            sub: '6.1 산 제물',
+                            text: '변화는 외부의 강요가 아니라, 복음에 감격한 마음의 변화로부터 시작되는 유기적 과정입니다.'
+                        },
+                        {
+                            sub: '6.3 약한 자와 강한 자',
+                            text: '강한 자가 자신의 자유를 기꺼이 제한하여 형제를 섬기는 것이 진정한 공동체입니다.'
+                        }
+                        ]
+                    }
+                    ]
+                }
+                },
+                {
+                id: 'galatians',
+                title: '갈라디아서',
+                subtitle: '참된 자유의 복음',
+                color: 'bg-orange-600',
+                content: {
+                    intro: '복음이 율법주의(종교)와 반율법주의(비종교) 모두를 거부하는 "제3의 길"임을 보여주는 자유의 대헌장입니다.',
+                    sections: [
+                    {
+                        title: '1장: 다른 복음은 없다',
+                        details: [
+                        {
+                            sub: '예수 플러스 무언가',
+                            text: '현대인의 다른 복음은 "예수 + 돈/성공/인정 = 구원"이라는 공식입니다. 복음은 오직 예수 그리스도 한 분만으로 충분함을 선포합니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '2장: 복음의 일관성',
+                        details: [
+                        {
+                            sub: '종교 vs 복음',
+                            text: '종교는 "순종하므로 사랑받는다"고 하지만, 복음은 "사랑받으므로 순종한다"고 말합니다. 사람을 두려워하지 않는 담대함은 복음적 자존감에서 나옵니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '3장: 율법과 약속',
+                        details: [
+                        {
+                            sub: '성취가 아닌 신분',
+                            text: '현대 사회는 "성취가 곧 너의 정체성"이라고 하지만, 갈라디아서는 우리가 이미 "그리스도로 옷 입은 자녀"라고 선언합니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '4장: 마음의 우상',
+                        details: [
+                        {
+                            sub: '노예로 돌아가지 말라',
+                            text: '우상은 하나님보다 더 중요해진 선한 것들(통제, 인정, 권력, 편안함)입니다. 복음만이 이 우상들을 제거하는 능력입니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '5장: 성령의 열매',
+                        details: [
+                        {
+                            sub: '방종이 아닌 자유',
+                            text: '참된 자유는 내 마음대로 하는 것이 아니라, 죄를 짓지 않을 수 있는 능력입니다.'
+                        },
+                        {
+                            sub: '성령의 열매 vs 가짜 열매',
+                            text: '사랑(희생), 희락(하나님을 즐거워함), 화평(주권 신뢰) 등 성령의 열매는 기질이나 도덕주의와 구별됩니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '6장: 공동체와 십자가',
+                        details: [
+                        {
+                            sub: '십자가만이 우리의 자랑',
+                            text: '십자가는 내가 얼마나 큰 죄인인지(겸손)와 얼마나 큰 사랑을 받은 존재인지(확신)를 동시에 보여줍니다.'
+                        }
+                        ]
+                    }
+                    ]
+                }
+                },
+                {
+                id: 'ephesians',
+                title: '에베소서',
+                subtitle: '우주적 구원과 실천적 교회',
+                color: 'bg-blue-600',
+                content: {
+                    intro: '성도들이 단순히 소수 종교 집단이 아니라, 하나님의 우주적 통일 계획의 핵심인 "교회"임을 선포합니다.',
+                    sections: [
+                    {
+                        title: '복음의 교리: 하늘에 속한 복 (1-3장)',
+                        details: [
+                        {
+                            sub: '2.1 삼위일체 하나님의 구원',
+                            text: '성부의 선택과 입양, 성자의 구속, 성령의 인치심으로 우리는 하나님의 소유가 되었습니다.'
+                        },
+                        {
+                            sub: '2.2 죽음에서 생명으로',
+                            text: '우리는 죄로 죽었던 상태였으나, 오직 하나님의 긍휼(But God)로 살아났습니다. 우리는 하나님의 걸작품(Poiema)입니다.'
+                        },
+                        {
+                            sub: '2.3 교회의 신비',
+                            text: '교회는 인종과 문화를 초월한 "제3의 인류"이며, 하나님의 지혜를 우주에 알리는 전시관입니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '교회의 실천: 부르심에 합당하게 행하라 (4-6장)',
+                        details: [
+                        {
+                            sub: '3.1 성화의 원리',
+                            text: '영적 카멜레온이 되지 말고, 옛 사람을 벗고 새 사람을 입어야 합니다. 구체적인 언어와 행동의 교정이 필요합니다.'
+                        },
+                        {
+                            sub: '3.2 관계의 혁명',
+                            text: '성령 충만은 공동체적 예배와 피차 복종으로 나타납니다. 가정과 일터는 영적 예배의 현장입니다.'
+                        },
+                        {
+                            sub: '3.3 영적 전쟁',
+                            text: '우리는 승리를 쟁취하기 위해 싸우는 것이 아니라, 이미 얻은 승리 위에 서기 위해 하나님의 전신 갑주를 입습니다.'
+                        }
+                        ]
+                    }
+                    ]
+                }
+                },
+                {
+                id: 'philippians',
+                title: '빌립보서',
+                subtitle: '정복할 수 없는 기쁨',
+                color: 'bg-pink-600',
+                content: {
+                    intro: '감옥에서 쓴 서신으로, 상황을 초월하여 그리스도를 아는 지식에서 나오는 기쁨을 이야기합니다.',
+                    sections: [
+                    {
+                        title: '1장: 복음은 멈추지 않는다',
+                        details: [
+                        {
+                            sub: '1.1 매임이 도리어 진보가 되다',
+                            text: '바울의 투옥은 오히려 로마 시위대에 복음을 전하는 전략적 기회가 되었습니다.'
+                        },
+                        {
+                            sub: '1.2 사는 것이 그리스도니',
+                            text: '삶의 목적이 그리스도라면 죽음조차 유익함(Gain)이 됩니다. 이것이 죽음의 두려움을 이기게 합니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '2장: 내려가는 것이 올라가는 길',
+                        details: [
+                        {
+                            sub: '2.1 겸손의 신학',
+                            text: '예수님은 자기를 비워 죽기까지 복종하셨고, 하나님은 그를 지극히 높이셨습니다. 이것이 승리의 패턴입니다.'
+                        },
+                        {
+                            sub: '2.2 구원을 이루라',
+                            text: '성화를 위해 노력해야 하지만, 우리 안에서 행하시는 분은 하나님이십니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '3장: 영적 대차대조표',
+                        details: [
+                        {
+                            sub: '3.1 배설물로 여김',
+                            text: '그리스도를 아는 지식이 가장 고상하기에 과거의 모든 스펙을 배설물로 여깁니다.'
+                        },
+                        {
+                            sub: '3.2 푯대를 향한 질주',
+                            text: '과거의 성공과 실패를 잊고, 부활의 영광을 향해 달려가는 경주를 해야 합니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '4장: 마음을 지키는 평강',
+                        details: [
+                        {
+                            sub: '4.1 불안을 이기는 기도',
+                            text: '염려를 기도로 맡길 때, 하나님의 평강이 마음의 보초(Sentinel)가 되어 지켜주십니다.'
+                        },
+                        {
+                            sub: '4.2 자족의 능력',
+                            text: '자족은 어떤 형편에서도 그리스도 한 분만으로 만족할 수 있는 영적 적응력입니다.'
+                        }
+                        ]
+                    }
+                    ]
+                }
+                },
+                {
+                id: 'corinthians',
+                title: '고린도전후서',
+                subtitle: '은혜로 변화되는 삶과 약함의 신비',
+                color: 'bg-purple-600',
+                content: {
+                    intro: '화려하지만 병든 고린도 교회에게 "복음이 엉망진창인 삶을 어떻게 재구성하는가"를 설명합니다.',
+                    sections: [
+                    {
+                        title: '제1부: 고린도전서 (삶을 변화시키는 은혜)',
+                        details: [
+                        {
+                            sub: '1. 분열과 지혜',
+                            text: '세상의 지혜가 아닌 십자가에 못 박힌 그리스도가 하나님의 능력입니다.'
+                        },
+                        {
+                            sub: '2. 성과 몸',
+                            text: '우리 몸은 그리스도의 피로 산 성전입니다. 진정한 자유는 내 몸으로 하나님을 영화롭게 하는 것입니다.'
+                        },
+                        {
+                            sub: '3. 우상 제물과 권리',
+                            text: '지식보다 사랑이 중요합니다. 나의 권리가 형제를 넘어지게 한다면 포기하는 것이 복음적 태도입니다.'
+                        },
+                        {
+                            sub: '4. 은사와 예배',
+                            text: '은사는 자기 과시가 아닌 공동체의 유익을 위한 것입니다. 사랑 없는 은사는 울리는 꽹과리입니다.'
+                        },
+                        {
+                            sub: '5. 부활',
+                            text: '부활은 현재 우리가 죄와 죽음의 문화를 거스르게 하는 동력입니다.'
+                        }
+                        ]
+                    },
+                    {
+                        title: '제2부: 고린도후서 (약함의 신비)',
+                        details: [
+                        {
+                            sub: '1. 위로의 하나님',
+                            text: '고난은 우리를 하나님만 의지하게 하며, 다른 환난 당한 자를 위로하게 합니다.'
+                        },
+                        {
+                            sub: '2. 질그릇 안의 보배',
+                            text: '우리는 깨지기 쉬운 질그릇이지만, 그 안에 보배이신 예수를 담고 있습니다.'
+                        },
+                        {
+                            sub: '4. 급진적 관대함',
+                            text: '헌금은 의무가 아니라 예수님의 희생에 대한 자발적 반응입니다.'
+                        },
+                        {
+                            sub: '5. 약할 때 강함이라',
+                            text: '나의 가장 약한 부분이 하나님의 능력이 머무는 곳이 됩니다. "내 은혜가 네게 족하다."'
+                        }
+                        ]
+                    }
+                    ]
+                }
+                }
+            ];
+
+            useEffect(() => {
+                if (darkMode) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }, [darkMode]);
+
+            const toggleDarkMode = () => setDarkMode(!darkMode);
+
+            const AccordionItem = ({ item }) => {
+                const [isOpen, setIsOpen] = useState(false);
+                
+                return (
+                <div className={`mb-4 border rounded-lg overflow-hidden ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'} shadow-sm`}>
+                    <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className={`w-full px-4 py-3 text-left flex justify-between items-center transition-colors ${
+                        isOpen 
+                        ? (darkMode ? 'bg-gray-700' : 'bg-gray-50') 
+                        : (darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50')
+                    }`}
+                    >
+                    <span className={`font-bold text-lg ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}>{item.title}</span>
+                    {isOpen ? <ChevronUp className="w-5 h-5 text-gray-500" /> : <ChevronDown className="w-5 h-5 text-gray-500" />}
+                    </button>
+                    
+                    {isOpen && (
+                    <div className={`p-4 ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-600'} border-t ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                        <div className="space-y-4">
+                        {item.details.map((detail, idx) => (
+                            <div key={idx} className="pb-2">
+                            <h4 className={`font-semibold mb-1 ${darkMode ? 'text-blue-400' : 'text-blue-800'}`}>{detail.sub}</h4>
+                            <p className="leading-relaxed text-sm md:text-base">{detail.text}</p>
+                            </div>
+                        ))}
+                        </div>
+                    </div>
+                    )}
+                </div>
+                );
+            };
+
+            const BookDetail = ({ book, onBack }) => (
+                <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'} pb-10`}>
+                {/* Header */}
+                <div className={`sticky top-0 z-10 px-4 py-3 flex items-center shadow-md ${book.color} text-white`}>
+                    <button onClick={onBack} className="mr-3 p-1 hover:bg-white/20 rounded-full transition">
+                    <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <h1 className="text-xl font-bold truncate">{book.title}</h1>
+                    <div className="ml-auto">
+                        <button onClick={toggleDarkMode} className="p-2 rounded-full hover:bg-white/20">
+                            {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Content */}
+                <div className="max-w-2xl mx-auto p-4 animate-fade-in">
+                    <div className="mb-6">
+                    <h2 className={`text-2xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{book.subtitle}</h2>
+                    <p className={`leading-relaxed ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{book.content.intro}</p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                    {book.content.sections.map((section, idx) => (
+                        <AccordionItem key={idx} item={section} />
+                    ))}
+                    </div>
+
+                    <div className="mt-8 text-center">
+                        <button 
+                            onClick={onBack}
+                            className={`px-6 py-2 rounded-full border ${darkMode ? 'border-gray-600 text-gray-400 hover:bg-gray-800' : 'border-gray-300 text-gray-500 hover:bg-gray-100'} transition text-sm`}
+                        >
+                            다른 서신 보기
+                        </button>
+                    </div>
+                </div>
+                </div>
+            );
+
+            const HomeView = () => (
+                <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'} p-4 flex flex-col items-center justify-center`}>
+                <div className="max-w-md w-full">
+                    <div className="flex justify-between items-center mb-8">
+                        <div className="text-center w-full">
+                            <h1 className="text-3xl font-extrabold mb-2 tracking-tight">바울 서신<br/>심층 가이드</h1>
+                            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>성경의 깊은 진리를 모바일에서 만나보세요</p>
+                        </div>
+                        <button onClick={toggleDarkMode} className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                            {darkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+                        </button>
+                    </div>
+
+                    <div className="grid gap-4">
+                    {studyData.map((book) => (
+                        <button
+                        key={book.id}
+                        onClick={() => setCurrentBook(book)}
+                        className={`${book.color} text-white p-5 rounded-xl shadow-lg transform transition hover:scale-102 active:scale-95 text-left group relative overflow-hidden`}
+                        >
+                        <div className="relative z-10 flex justify-between items-center">
+                            <div>
+                            <h2 className="text-2xl font-bold mb-1">{book.title}</h2>
+                            <p className="text-white/90 text-sm font-medium">{book.subtitle}</p>
+                            </div>
+                            <ChevronRight className="w-6 h-6 text-white/70 group-hover:text-white transition" />
+                        </div>
+                        <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                        </button>
+                    ))}
+                    </div>
+                    
+                    <div className={`mt-12 text-center text-xs ${darkMode ? 'text-gray-600' : 'text-gray-400'}`}>
+                    <p>© 2026 Bible Study Guide App</p>
+                    </div>
+                </div>
+                </div>
+            );
+
+            return (
+                <div className="font-sans antialiased">
+                {currentBook ? (
+                    <BookDetail book={currentBook} onBack={() => setCurrentBook(null)} />
+                ) : (
+                    <HomeView />
+                )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<BibleGuideApp />);
+    </script>
+</body>
+</html>
