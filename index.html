@@ -12,10 +12,16 @@
             font-family: 'Noto Sans KR', sans-serif;
             background-color: #f8fafc;
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation; /* 더블 탭 확대 방지 */
         }
         .card-active:active {
             transform: scale(0.98);
             background-color: #f1f5f9;
+        }
+        /* 날짜 영역 클릭 가능 표시 (선택사항, 사용자 경험상 숨김 기능을 원하면 제거 가능) */
+        #date-container {
+            cursor: pointer;
+            user-select: none;
         }
     </style>
 </head>
@@ -27,7 +33,10 @@
         <!-- 심플 헤더 영역 -->
         <div class="flex items-end justify-between mb-6">
             <h1 class="text-2xl font-bold text-gray-900">메인 대시보드</h1>
-            <span id="current-date" class="text-sm text-gray-500 font-medium"></span>
+            <!-- 날짜 영역: 두 번 클릭/터치 이벤트 대상 -->
+            <div id="date-container" class="text-sm text-gray-500 font-medium py-2 pl-4">
+                <span id="current-date"></span>
+            </div>
         </div>
         
         <!-- 상태 메시지 -->
@@ -35,78 +44,82 @@
             <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"></i>
             <div>
                 <h2 class="text-sm font-bold text-gray-800">환영합니다</h2>
-                <p class="text-xs text-gray-500 mt-1">아래 목록에서 원하는 학습 도구를 선택하세요.</p>
+                <p class="text-xs text-gray-500 mt-1">원하시는 메뉴를 선택하여 시작하세요.</p>
             </div>
         </div>
 
         <h2 class="text-sm font-bold text-gray-500 mb-3 px-1">학습 자료 및 도구</h2>
 
-        <!-- 모바일 최적화된 리스트형 카드 그리드 -->
-        <div class="grid grid-cols-1 gap-4">
+        <!-- 메뉴 목록 -->
+        <div class="flex flex-col gap-4">
             
-            <!-- Guide Link: 서신 가이드 앱 -->
-            <a href="guide.html" class="block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden card-active transition-colors">
-                <div class="flex items-center p-4">
-                    <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="smartphone" class="w-6 h-6 text-blue-600"></i>
-                    </div>
-                    <div class="ml-4 flex-grow">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-base font-bold text-gray-900">서신 가이드 앱</h3>
-                            <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-bold">App</span>
-                        </div>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 ml-2"></i>
-                </div>
-            </a>
-
-            <!-- Galatians Link: 갈라디아서 묵상 가이드 파일 -->
-            <a href="galatians.html" class="block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden card-active transition-colors">
-                <div class="flex items-center p-4">
-                    <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="book-open" class="w-6 h-6 text-indigo-600"></i>
-                    </div>
-                    <div class="ml-4 flex-grow">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-base font-bold text-gray-900">갈라디아서 묵상 가이드</h3>
-                            <span class="bg-indigo-100 text-indigo-700 text-[10px] px-2 py-0.5 rounded-full font-bold">PDF/Doc</span>
-                        </div>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 ml-2"></i>
-                </div>
-            </a>
-
-            <!-- Test V1 Link: 교사용 질문지 -->
-            <a href="test_v1.html" class="block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden card-active transition-colors">
-                <div class="flex items-center p-4">
-                    <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="presentation" class="w-6 h-6 text-emerald-600"></i>
-                    </div>
-                    <div class="ml-4 flex-grow">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-base font-bold text-gray-900">교사용 질문지</h3>
-                            <span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-0.5 rounded-full font-bold">Teacher</span>
-                        </div>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 ml-2"></i>
-                </div>
-            </a>
-
-            <!-- Test V2 Link: 학생용 질문지 -->
-            <a href="test_v2.html" class="block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden card-active transition-colors">
+            <!-- [공개] Test V2 Link: 학생용 질문지 (항상 보임) -->
+            <a href="test_v2.html" class="block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden card-active transition-colors order-first">
                 <div class="flex items-center p-4">
                     <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="edit-3" class="w-6 h-6 text-amber-600"></i>
                     </div>
                     <div class="ml-4 flex-grow">
                         <div class="flex justify-between items-center">
-                            <h3 class="text-base font-bold text-gray-900">학생용 질문지</h3>
+                            <h3 class="text-base font-bold text-gray-900">학생용 유형찾기</h3>
                             <span class="bg-amber-100 text-amber-700 text-[10px] px-2 py-0.5 rounded-full font-bold">Student</span>
                         </div>
                     </div>
                     <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 ml-2"></i>
                 </div>
             </a>
+
+            <!-- [숨김] 관리자 메뉴 그룹 -->
+            <div id="hidden-menu" class="hidden flex flex-col gap-4 transition-all duration-300 ease-in-out">
+                
+                <!-- Guide Link: 서신 가이드 앱 -->
+                <a href="guide.html" class="block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden card-active transition-colors">
+                    <div class="flex items-center p-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="smartphone" class="w-6 h-6 text-blue-600"></i>
+                        </div>
+                        <div class="ml-4 flex-grow">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-base font-bold text-gray-900">서신 가이드</h3>
+                                <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-bold">Guide</span>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 ml-2"></i>
+                    </div>
+                </a>
+
+                <!-- Galatians Link: 갈라디아서 묵상 가이드 파일 -->
+                <a href="galatians.html" class="block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden card-active transition-colors">
+                    <div class="flex items-center p-4">
+                        <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="book-open" class="w-6 h-6 text-indigo-600"></i>
+                        </div>
+                        <div class="ml-4 flex-grow">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-base font-bold text-gray-900">갈라디아서 묵상 가이드</h3>
+                                <span class="bg-indigo-100 text-indigo-700 text-[10px] px-2 py-0.5 rounded-full font-bold">Doc</span>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 ml-2"></i>
+                    </div>
+                </a>
+
+                <!-- Test V1 Link: 교사용 질문지 -->
+                <a href="test_v1.html" class="block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden card-active transition-colors">
+                    <div class="flex items-center p-4">
+                        <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="presentation" class="w-6 h-6 text-emerald-600"></i>
+                        </div>
+                        <div class="ml-4 flex-grow">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-base font-bold text-gray-900">교사용 유형찾기</h3>
+                                <span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-0.5 rounded-full font-bold">Teacher</span>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 ml-2"></i>
+                    </div>
+                </a>
+            </div>
 
         </div>
 
@@ -120,6 +133,28 @@
         const now = new Date();
         const dateOptions = { month: 'long', day: 'numeric', weekday: 'short' };
         document.getElementById('current-date').textContent = now.toLocaleDateString('ko-KR', dateOptions);
+
+        // 히든 메뉴 로직 (더블 탭/클릭 감지)
+        const dateContainer = document.getElementById('date-container');
+        const hiddenMenu = document.getElementById('hidden-menu');
+        let lastTap = 0;
+
+        dateContainer.addEventListener('click', function(e) {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            
+            // 0.5초(500ms) 이내에 두 번 클릭 시 작동
+            if (tapLength < 500 && tapLength > 0) {
+                hiddenMenu.classList.toggle('hidden');
+                e.preventDefault();
+            }
+            lastTap = currentTime;
+        });
+
+        // PC용 더블 클릭 이벤트도 추가 (보조)
+        dateContainer.addEventListener('dblclick', function(e) {
+            hiddenMenu.classList.toggle('hidden');
+        });
     </script>
 </body>
 </html>
