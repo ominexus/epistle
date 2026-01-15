@@ -3,337 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>나의 바울 서신 유형 찾기</title>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <title>프로젝트 대시보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* === ✨ 모바일 핵심 최적화 (여기부터) ✨ === */
-        * {
-            box-sizing: border-box;
-            /* iOS에서 터치 시 회색 박스 생기는 것 방지 */
-            -webkit-tap-highlight-color: transparent;
-            /* 터치 반응 속도 향상 (더블탭 줌 딜레이 제거) */
-            touch-action: manipulation;
-        }
         body {
-            /* 빠른 터치 시 텍스트 선택되는 것 방지 */
-            user-select: none;
-            -webkit-user-select: none;
-            /* ... 기존 스타일 ... */
-            font-family: 'Pretendard', 'Malgun Gothic', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: var(--text);
-            padding: 20px;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
         }
-        /* === 모바일 핵심 최적화 (여기까지) === */
-
-        :root {
-            --primary: #4A6FA5;
-            --accent: #FF9F43;
-            --bg: #F3F4F6;
-            --white: #FFFFFF;
-            --text: #333333;
-            --gray: #666666;
-        }
-
-        .card {
-            background: var(--white);
-            width: 100%;
-            max-width: 420px;
-            padding: 2.5rem 2rem;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            transition: height 0.3s;
-            min-height: 550px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        h1 { color: var(--primary); font-size: 1.6rem; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
-        h2 { font-size: 1.3rem; margin-bottom: 1.5rem; font-weight: 700; color: #2c3e50; }
-        p.sub { font-size: 1rem; color: var(--gray); line-height: 1.6; margin-bottom: 2rem; word-break: keep-all; }
-        
-        /* 버튼 스타일 강화 */
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border-radius: 14px;
-            border: none;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.1s ease-in-out, background-color 0.2s; /* 반응 속도 더 빠르게 */
-            margin-top: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* 터치했을 때 즉각적인 눌림 효과 */
-        .btn:active { transform: scale(0.96) !important; }
-
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3); }
-        
-        .btn-option { 
-            background: #F8F9FA; 
-            border: 2px solid #E9ECEF; 
-            color: #495057; 
-            margin-bottom: 12px;
-            text-align: left;
-            padding-left: 20px;
-        }
-        /* 모바일에서는 hover 효과 제거 (터치 후 남아있는 문제 해결) */
-        @media (hover: hover) {
-            .btn-option:hover { border-color: var(--primary); background: #EBF2FF; color: var(--primary); }
-        }
-        .btn-option:active { border-color: var(--primary); background: #EBF2FF; color: var(--primary); }
-
-
-        .progress-area { position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: #eee; }
-        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.4s ease; }
-
-        .result-icon { font-size: 4.5rem; margin-bottom: 10px; animation: bounce 2s infinite; }
-        .tag { display: inline-block; background: var(--primary); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; margin-bottom: 10px; }
-        .desc-box { background: #F8F9FA; padding: 20px; border-radius: 16px; text-align: left; font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; border: 1px solid #eee; }
-        .bible-card { background-color: #FFF8E1; border-left: 4px solid var(--accent); padding: 15px; text-align: left; margin-bottom: 20px; border-radius: 0 10px 10px 0; }
-        .bible-text { font-style: italic; font-weight: 600; color: #555; font-size: 0.95rem; }
-        .bible-ref { display: block; margin-top: 8px; font-size: 0.85rem; color: #888; text-align: right; }
-
-        .hidden { display: none !important; }
-        .fade-in { animation: fadeIn 0.6s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
-
-        /* 타이브레이커 버튼 글자 크기 조정 */
-        #tie-options .btn {
-            font-size: 0.95rem;     /* 기존 1.1rem에서 0.95rem으로 축소 */
-            padding: 14px 18px;     /* 글자 크기에 맞춰 패딩 살짝 조정 */
-            line-height: 1.4;       /* 줄간격 최적화로 가독성 향상 */
-            word-break: keep-all;   /* 단어 단위로 줄바꿈 방지 */
-            letter-spacing: -0.5px; /* 자간을 좁혀 더 많은 텍스트 수용 */
-        }
-
-        /* 텍스트가 유독 길 경우를 대비한 미세 조정 */
-        #tie-options .btn-option {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
-        #result-capture-area.for-capture {
-            background: #ffffff !important;
-            padding: 60px 40px !important; /* 이미지에 충분한 상하좌우 여백 부여 */
-            border-radius: 40px !important; /* 이미지 모서리를 크게 라운딩 */
-            box-shadow: none !important;    /* 이미지 자체에는 그림자가 없는 게 깔끔합니다 */
-            width: 450px !important;        /* 이미지의 가로 폭을 고정하여 레이아웃 최적화 */
+        .card-active:active {
+            transform: scale(0.98);
+            background-color: #f1f5f9;
         }
     </style>
 </head>
-<body>
-    <div class="card">
-        <section id="screen-start" class="fade-in">
-            <div style="font-size: 4rem; margin-bottom: 20px;">🏛️</div>
-            <h1>바울의 편지 찾기</h1>
-            <p class="sub">수많은 교회에 편지를 썼던 바울,<br>지금 나에게 편지를 보낸다면<br>어떤 내용이 담겨 있을까요?</p>
-            <button class="btn btn-primary" onclick="startTest()">내 유형 알아보기</button>
-            <div style="margin-top:20px; font-size:0.8rem; color:#aaa;">로고스 고등부</div>
-        </section>
+<body class="min-h-screen pb-safe">
 
-        <section id="screen-quiz" class="hidden">
-            <div class="progress-area"><div class="progress-bar" id="bar"></div></div>
-            <div style="margin-bottom: 30px; color: var(--primary); font-weight:bold;">Q<span id="q-num">1</span></div>
-            <h2 id="q-text" style="min-height: 60px;">질문 내용</h2>
-            <div id="btn-area"></div>
-        </section>
-
-        <section id="screen-tiebreaker" class="hidden fade-in">
-            <div style="font-size: 3rem; margin-bottom: 15px;">⚖️</div>
-            <h2 style="color:#e67e22;">마지막 선택!</h2>
-            <p id="tie-desc" style="margin-bottom:20px; color:#666;">지금 당신에게 더 필요한 가치는?</p>
-            <div id="tie-options"></div>
-        </section>
-
-        <section id="screen-retry" class="hidden fade-in">
-            <div style="font-size: 4rem; margin-bottom: 15px;">🧐</div>
-            <h2 style="color:#4A6FA5;">분석이 어려워요!</h2>
-            <p style="margin-bottom:20px; color:#666; line-height: 1.6;">
-                학생분의 신앙 색깔이 너무 다채롭네요!<br>
-                하나로 정의하기가 조금 어렵습니다.<br>
-                조금 더 솔직하게 다시 한번 답변해 볼까요?
-            </p>
-            <button class="btn btn-primary" onclick="location.reload()">처음으로 이동하기</button>
-        </section>
-
-        <section id="screen-loading" class="hidden">
-            <div style="font-size: 3rem;">📩</div>
-            <h2>결과 분석 중...</h2>
-            <p class="sub">바울이 펜을 들고<br>당신을 위한 서신을 고르고 있습니다.</p>
-        </section>
-
-        <section id="screen-result" class="hidden fade-in">
-            <div id="result-capture-area">
-                <div id="r-icon" style="font-size: 4rem; margin-bottom:10px;">🎁</div>
-                <h2 id="r-title" style="color:var(--primary);">결과 제목</h2>
-                <div class="bible-card">
-                    <div class="bible-text" id="r-verse">말씀</div>
-                    <div id="r-ref" style="text-align:right; font-size:0.8rem; color:#888; margin-top:5px;">참조</div>
-                </div>
-                <div id="r-desc" style="text-align:left; font-size:0.95rem; line-height:1.6; background:#f8f9fa; padding:15px; border-radius:10px; margin-bottom:20px;">설명</div>
-                <div style="margin-top:10px; font-size:0.7rem; color:#ccc;">LOGOS CHURCH HIGH SCHOOL</div>
+    <!-- 메인 컨텐츠 -->
+    <main class="w-full px-4 py-8 max-w-lg mx-auto">
+        
+        <!-- 심플 헤더 영역 -->
+        <div class="flex items-end justify-between mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">메인 대시보드</h1>
+            <span id="current-date" class="text-sm text-gray-500 font-medium"></span>
+        </div>
+        
+        <!-- 상태 메시지 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6 flex items-start gap-3">
+            <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"></i>
+            <div>
+                <h2 class="text-sm font-bold text-gray-800">환영합니다</h2>
+                <p class="text-xs text-gray-500 mt-1">아래 목록에서 원하는 학습 도구를 선택하세요.</p>
             </div>
+        </div>
 
-            <button class="btn btn-primary" onclick="downloadImage()">결과 이미지 저장하기 📸</button>
-            <button class="btn" style="background:#eee; color:#333;" onclick="location.reload()">다시 하기</button>
-        </section>
-    </div>
+        <h2 class="text-sm font-bold text-gray-500 mb-3 px-1">학습 자료 및 도구</h2>
+
+        <!-- 모바일 최적화된 리스트형 카드 그리드 -->
+        <div class="grid grid-cols-1 gap-4">
+            
+            <!-- Guide Link: 서신 가이드 앱 -->
+            <a href="guide.html" class="block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden card-active transition-colors">
+                <div class="flex items-center p-4">
+                    <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="smartphone" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <div class="ml-4 flex-grow">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-base font-bold text-gray-900">서신 가이드 앱</h3>
+                            <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-bold">App</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 ml-2"></i>
+                </div>
+            </a>
+
+            <!-- Galatians Link: 갈라디아서 묵상 가이드 파일 -->
+            <a href="galatians.html" class="block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden card-active transition-colors">
+                <div class="flex items-center p-4">
+                    <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="book-open" class="w-6 h-6 text-indigo-600"></i>
+                    </div>
+                    <div class="ml-4 flex-grow">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-base font-bold text-gray-900">갈라디아서 묵상 가이드</h3>
+                            <span class="bg-indigo-100 text-indigo-700 text-[10px] px-2 py-0.5 rounded-full font-bold">PDF/Doc</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 ml-2"></i>
+                </div>
+            </a>
+
+            <!-- Test V1 Link: 교사용 질문지 -->
+            <a href="test_v1.html" class="block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden card-active transition-colors">
+                <div class="flex items-center p-4">
+                    <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="presentation" class="w-6 h-6 text-emerald-600"></i>
+                    </div>
+                    <div class="ml-4 flex-grow">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-base font-bold text-gray-900">교사용 질문지</h3>
+                            <span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-0.5 rounded-full font-bold">Teacher</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 ml-2"></i>
+                </div>
+            </a>
+
+            <!-- Test V2 Link: 학생용 질문지 -->
+            <a href="test_v2.html" class="block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden card-active transition-colors">
+                <div class="flex items-center p-4">
+                    <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="edit-3" class="w-6 h-6 text-amber-600"></i>
+                    </div>
+                    <div class="ml-4 flex-grow">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-base font-bold text-gray-900">학생용 질문지</h3>
+                            <span class="bg-amber-100 text-amber-700 text-[10px] px-2 py-0.5 rounded-full font-bold">Student</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 ml-2"></i>
+                </div>
+            </a>
+
+        </div>
+
+    </main>
 
     <script>
-        const qData = [
-            { t: "지금 신앙생활에서 '감정적 체험'보다 '논리적 이해'가 더 중요하다고 느낀다.", type: "Ro" },
-            { t: "현재 공동체 내의 갈등이나 복잡한 인간관계로 인해 고민이 있다.", type: "Co" },
-            { t: "종교적인 의무감이나 율법적인 신앙생활에서 벗어나 '자유'롭고 싶다.", type: "Ga" },
-            { t: "눈에 보이는 현실 너머의 영적 세계와 나의 부르심에 관심이 많다.", type: "Ep" },
-            { t: "지금 상황이 지치고 힘들어서 따뜻한 위로와 미래의 소망이 절실하다.", type: "Ph" },
-            { t: "기독교의 핵심 교리(죄, 구원 등)를 튼튼하게 다지고 싶다.", type: "Ro" },
-            { t: "나의 은사(재능)를 공동체를 위해 어떻게 써야 할지 궁금하다.", type: "Co" },
-            { t: "남들의 시선을 의식하는 신앙에서 벗어나 본질에 집중하고 싶다.", type: "Ga" },
-            { t: "교회의 진정한 의미와 거대한 영적 비밀을 깨닫고 싶다.", type: "Ep" },
-            { t: "환경에 흔들리지 않고 항상 기뻐할 수 있는 마음을 갖고 싶다.", type: "Ph" }
-        ];
-        const rData = {
-            "Ro": { title: "진리 탐구형 (로마서)", icon: "📖", tieTxt: "복음의 논리적 확신과 교리의 토대", desc: "흔들리지 않는 진리의 체계를 세울 때 신앙의 자유가 시작됩니다.", verse: "복음에는 하나님의 의가 나타나서 믿음으로 믿음에 이르게 하나니...", ref: "로마서 1:17" },
-            "Co": { title: "관계 회복형 (고린도서)", icon: "🤝", tieTxt: "공동체 속에서의 사랑과 갈등 해결", desc: "다양한 은사보다 더 큰 길인 사랑을 택하여 공동체를 세워가세요.", verse: "그런즉 믿음, 소망, 사랑 이 세 가지는 항상 있을 것인데 그 중의 제일은 사랑이라", ref: "고린도전서 13:13" },
-            "Ga": { title: "자유 추구형 (갈라디아서)", icon: "🕊️", tieTxt: "율법의 멍에를 벗어던지는 은혜의 자유", desc: "사람의 인정을 구하는 종의 멍에를 벗고 복음의 자유를 누리십시오.", verse: "그리스도께서 우리를 자유롭게 하려고 자유를 주셨으니...", ref: "갈라디아서 5:1" },
-            "Ep": { title: "영적 신비형 (에베소서)", icon: "🌌", tieTxt: "우주적 교회의 영광과 나의 부르심", desc: "현실 너머 거대한 하나님의 계획 속에서 당신의 정체성을 확인하세요.", verse: "너희 마음의 눈을 밝히사 그의 부르심의 소망이 무엇이며...", ref: "에베소서 1:18" },
-            "Ph": { title: "기쁨과 소망형 (빌립보서)", icon: "☀️", tieTxt: "고난 속에서도 솟아나는 하늘의 기쁨", desc: "감옥에서도 찬양했던 바울처럼, 환경을 뛰어넘는 기쁨을 선택하세요.", verse: "주 안에서 항상 기뻐하라 내가 다시 말하노니 기뻐하라", ref: "빌립보서 4:4" }
-        };
+        // Lucide 아이콘 초기화
+        lucide.createIcons();
 
-        let step = 0;
-        let scores = { Ro:0, Co:0, Ga:0, Ep:0, Ph:0 };
-
-        function startTest() {
-            document.getElementById('screen-start').classList.add('hidden');
-            document.getElementById('screen-quiz').classList.remove('hidden');
-            nextQ();
-        }
-
-        function nextQ() {
-            if (step >= qData.length) { showResult(); return; }
-            document.getElementById('bar').style.width = `${(step / qData.length) * 100}%`;
-            document.getElementById('q-num').innerText = step + 1;
-            document.getElementById('q-text').innerText = qData[step].t;
-            const area = document.getElementById('btn-area');
-            area.innerHTML = '';
-            [{t:"매우 그렇다", v:3}, {t:"그렇다", v:2}, {t:"아니다", v:0}].forEach(opt => {
-                const b = document.createElement('button');
-                b.className = 'btn btn-option';
-                b.innerText = opt.t;
-                b.onclick = () => { scores[qData[step].type] += opt.v; step++; nextQ(); };
-                area.appendChild(b);
-            });
-        }
-
-        function showResult() {
-            document.getElementById('screen-quiz').classList.add('hidden');
-            document.getElementById('screen-loading').classList.remove('hidden');
-
-            setTimeout(() => {
-                const max = Math.max(...Object.values(scores));
-                const winners = Object.keys(scores).filter(k => scores[k] === max);
-
-                document.getElementById('screen-loading').classList.add('hidden');
-
-                if (winners.length >= 4) {
-                    // 동점 4개 이상: 리트라이 화면
-                    document.getElementById('screen-retry').classList.remove('hidden');
-                } else if (winners.length >= 2) {
-                    // 동점 2~3개: 타이브레이커 발동
-                    startTiebreaker(winners);
-                } else {
-                    renderFinal(winners[0]);
-                }
-            }, 1500);
-        }
-
-        function startTiebreaker(winners) {
-            const tieScreen = document.getElementById('screen-tiebreaker');
-            tieScreen.classList.remove('hidden');
-            
-            // 3개일 경우 안내 문구 변경
-            if(winners.length === 3) {
-                document.getElementById('tie-desc').innerText = "세 가지 가치가 박빙이네요!\n가장 마음이 가는 하나를 골라주세요.";
-            }
-
-            const area = document.getElementById('tie-options');
-            area.innerHTML = '';
-            winners.forEach(type => {
-                const b = document.createElement('button');
-                b.className = 'btn btn-option';
-                b.style.marginBottom = "10px";
-                b.innerText = rData[type].tieTxt;
-                b.onclick = () => {
-                    tieScreen.classList.add('hidden');
-                    renderFinal(type);
-                };
-                area.appendChild(b);
-            });
-        }
-
-        function renderFinal(type) {
-            document.getElementById('screen-loading').classList.add('hidden');
-            document.getElementById('screen-result').classList.remove('hidden');
-            const res = rData[type];
-            document.getElementById('r-icon').innerText = res.icon;
-            document.getElementById('r-title').innerText = res.title;
-            document.getElementById('r-verse').innerText = `"${res.verse}"`;
-            document.getElementById('r-ref').innerText = res.ref;
-            document.getElementById('r-desc').innerText = res.desc;
-        }
-        function downloadImage() {
-            const captureElement = document.getElementById('result-capture-area');
-            
-            // 캡처 중임을 알리는 UI 변경 (선택 사항)
-            const btn = document.querySelector('.btn-primary');
-
-            captureElement.classList.add('for-capture');
-
-            const originalText = btn.innerText;
-            btn.innerText = "이미지 생성 중...";
-            btn.disabled = true;
-
-            html2canvas(captureElement, {
-                scale: 2, // 고해상도로 캡처 (선명하게)
-                backgroundColor: null, // 배경색 지정
-                logging: false, // 로그 끄기
-                useCORS: true // 외부 이미지 사용 시 필요
-            }).then(canvas => {
-                // 캔버스를 이미지 URL로 변환
-                const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-                
-                // 가상의 다운로드 링크 생성 및 클릭
-                const link = document.createElement('a');
-                link.download = '나의_바울서신_유형.png'; // 저장될 파일명
-                link.href = image;
-                link.click();
-
-                // UI 원상복구
-                captureElement.classList.remove('for-capture');
-                btn.innerText = originalText;
-                btn.disabled = false;
-            }).catch(err => {
-                captureElement.classList.remove('for-capture');
-                alert("이미지 저장 중 오류가 발생했습니다.");
-                btn.innerText = originalText;
-                btn.disabled = false;
-            });
-        }
+        // 날짜 설정
+        const now = new Date();
+        const dateOptions = { month: 'long', day: 'numeric', weekday: 'short' };
+        document.getElementById('current-date').textContent = now.toLocaleDateString('ko-KR', dateOptions);
     </script>
 </body>
 </html>
