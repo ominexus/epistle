@@ -18,7 +18,7 @@
             transform: scale(0.98);
             background-color: #f1f5f9;
         }
-        /* 날짜 영역 클릭 가능 표시 (선택사항, 사용자 경험상 숨김 기능을 원하면 제거 가능) */
+        /* 날짜 영역 클릭 가능 표시 */
         #date-container {
             cursor: pointer;
             user-select: none;
@@ -33,7 +33,7 @@
         <!-- 심플 헤더 영역 -->
         <div class="flex items-end justify-between mb-6">
             <h1 class="text-2xl font-bold text-gray-900">메인 대시보드</h1>
-            <!-- 날짜 영역: 두 번 클릭/터치 이벤트 대상 -->
+            <!-- 날짜 영역: 5번 클릭/터치 이벤트 대상 -->
             <div id="date-container" class="text-sm text-gray-500 font-medium py-2 pl-4">
                 <span id="current-date"></span>
             </div>
@@ -134,26 +134,33 @@
         const dateOptions = { month: 'long', day: 'numeric', weekday: 'short' };
         document.getElementById('current-date').textContent = now.toLocaleDateString('ko-KR', dateOptions);
 
-        // 히든 메뉴 로직 (더블 탭/클릭 감지)
+        // 히든 메뉴 로직 (5번 클릭 감지)
         const dateContainer = document.getElementById('date-container');
         const hiddenMenu = document.getElementById('hidden-menu');
-        let lastTap = 0;
+        let clickCount = 0;
+        let resetTimer;
 
         dateContainer.addEventListener('click', function(e) {
-            const currentTime = new Date().getTime();
-            const tapLength = currentTime - lastTap;
+            clickCount++;
             
-            // 0.5초(500ms) 이내에 두 번 클릭 시 작동
-            if (tapLength < 500 && tapLength > 0) {
-                hiddenMenu.classList.toggle('hidden');
-                e.preventDefault();
-            }
-            lastTap = currentTime;
-        });
+            // 클릭이 감지되면 기존 리셋 타이머 취소
+            clearTimeout(resetTimer);
 
-        // PC용 더블 클릭 이벤트도 추가 (보조)
-        dateContainer.addEventListener('dblclick', function(e) {
-            hiddenMenu.classList.toggle('hidden');
+            if (clickCount === 5) {
+                hiddenMenu.classList.toggle('hidden');
+                clickCount = 0; // 메뉴 토글 후 카운트 초기화
+                
+                // 햅틱 피드백 (모바일 지원 시)
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+                return;
+            }
+
+            // 1초 동안 추가 클릭이 없으면 카운트 초기화
+            resetTimer = setTimeout(() => {
+                clickCount = 0;
+            }, 1000);
         });
     </script>
 </body>
