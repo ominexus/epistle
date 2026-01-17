@@ -118,8 +118,9 @@
                 </div>
                 <div id="r-desc" style="text-align:left; font-size:0.95rem; line-height:1.6; background:#f8f9fa; padding:15px; border-radius:10px;">설명</div>
             </div>
-            <button class="btn btn-primary" onclick="downloadImage()">이미지 저장하기 📸</button>
-            <button class="btn" style="background:#eee;" onclick="location.reload()">다시 하기</button>
+            <button class="btn btn-primary" onclick="shareResult()">결과 외부 앱으로 공유하기 📤</button>
+            <button class="btn" style="background:#eee; color:var(--text);" onclick="downloadImage()">갤러리에 이미지 저장 📸</button>
+            <button class="btn" style="background:#ddd;" onclick="location.reload()">다시 하기</button>
         </section>
     </div>
 
@@ -237,7 +238,26 @@
                 area.classList.remove('for-capture');
             });
         }
+
+        async function shareResult() {
+            const area = document.getElementById('result-capture-area');
+            const canvas = await html2canvas(area, { scale: 2 });
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], 'pci_result.png', { type: 'image/png' });
+                const shareData = {
+                    title: '바울 서신 유형 테스트 결과',
+                    text: `저의 바울 서신 유형은 [${document.getElementById('r-title').innerText}]입니다.`,
+                    files: [file],
+                };
+                if (navigator.canShare && navigator.canShare(shareData)) {
+                    try { await navigator.share(shareData); } catch (e) { console.log('공유 실패', e); }
+                } else {
+                    alert('이 브라우저에서는 공유 기능을 지원하지 않습니다. 크롬이나 사파리를 사용해 주세요.');
+                }
+            }, 'image/png');
+        }
     </script>
 </body>
 </html>
+
 
