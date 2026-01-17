@@ -257,7 +257,16 @@ const rData = {
         let step = 0;
         let scores = { Ro:0, Co:0, Ga:0, Ep:0, Ph:0 };
 
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
         function startTest() {
+            shuffleArray(qData);
+            
             document.getElementById('screen-start').classList.add('hidden');
             document.getElementById('screen-quiz').classList.remove('hidden');
             nextQ();
@@ -377,3 +386,4 @@ const rData = {
 </body>
 
 </html>
+
